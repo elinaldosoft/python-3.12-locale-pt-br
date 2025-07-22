@@ -3,7 +3,7 @@ FROM python:3.12-slim
 # Evita prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Instala locais e dependências mínimas
+# Instala locales e dependências mínimas
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         locales \
@@ -12,9 +12,9 @@ RUN apt-get update && \
         build-essential \
         gcc \
         libpq-dev \
-        && locale-gen pt_BR.UTF-8 \
-        && update-locale LANG=pt_BR.UTF-8 \
-        && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && locale-gen pt_BR.UTF-8 \
+    && update-locale LANG=pt_BR.UTF-8 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Define locale padrão
 ENV LANG=pt_BR.UTF-8
@@ -28,11 +28,8 @@ RUN curl -sSL https://install.python-poetry.org | python3 - && \
     poetry config virtualenvs.create true && \
     poetry config virtualenvs.in-project true
 
+# Define diretório de trabalho (usado por quem herdar a imagem)
 WORKDIR /app
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root
 
-# Copia o restante do código (opcional: você pode sobrescrever isso no GitHub Actions)
-COPY . .
-
+# Entrada padrão da imagem (ajustável no projeto que a usar)
 CMD ["/bin/bash"]
