@@ -1,9 +1,8 @@
 FROM python:3.12
 
-# Evita prompts interativos
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Instala locales e dependências mínimas
+# Instala dependências e ativa pt_BR.UTF-8
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         locales \
@@ -12,13 +11,13 @@ RUN apt-get update && \
         build-essential \
         gcc \
         libpq-dev \
+    && echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen pt_BR.UTF-8 \
-    && update-locale LANG=pt_BR.UTF-8 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Define locale padrão
+# Define locale no ambiente
 ENV LANG=pt_BR.UTF-8
-ENV LANGUAGE=pt_BR.UTF-8
+ENV LANGUAGE=pt_BR:pt
 ENV LC_ALL=pt_BR.UTF-8
 
 # Instala Poetry
@@ -28,8 +27,6 @@ RUN curl -sSL https://install.python-poetry.org | python3 - && \
     poetry config virtualenvs.create true && \
     poetry config virtualenvs.in-project true
 
-# Define diretório de trabalho (usado por quem herdar a imagem)
 WORKDIR /app
 
-# Entrada padrão da imagem (ajustável no projeto que a usar)
 CMD ["/bin/bash"]
